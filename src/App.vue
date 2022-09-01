@@ -78,6 +78,7 @@ background-color: #1a1a1a;
 color: #fff;
 
 }
+
 button,
 .button {
   cursor: pointer;
