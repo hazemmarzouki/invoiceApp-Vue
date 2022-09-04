@@ -4,6 +4,7 @@
       <Navigation />
 
       <div class="app-content flex flex-column">
+        <invoiceModal v-if="invoiceModal"/>
         <router-view />
       </div>
     </div>
@@ -15,7 +16,9 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Navigation from "./components/Navigation.vue";
+import invoiceModal from "./components/Invoice_Modal.vue";
 
 export default {
   data() {
@@ -26,6 +29,8 @@ export default {
 
   components: {
     Navigation,
+    invoiceModal,
+   
   },
   created() {
     this.checkScreen();
@@ -42,6 +47,10 @@ export default {
       
     },
   },
+  computed : {
+    ...mapState(["invoiceModal"]),
+
+  }
 };
 </script>
 
