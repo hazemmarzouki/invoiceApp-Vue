@@ -123,10 +123,8 @@
 </template>
 
 <script>
-import {
-    mapMutations
-} from "vuex";
-
+import { mapMutations} from "vuex";
+import {uid} from "uid";
 export default {
     name: "invoiceModal",
     data() {
@@ -160,12 +158,38 @@ export default {
             invoiceTotal: 0,
         };
     },
+    created() {
+
+      //Get current date for invoice date field
+      this.invoiceDateUnix = Date.now(); 
+      this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString('en-us', this.dateOptions);
+    },
     methods: {
         ...mapMutations(["TOGGLE_INVOICE"]),
         closeInvoice() {
             this.TOGGLE_INVOICE();
-
         },
+        addNewInvoiceItem(){
+          this.invoiceItemList.push({
+            id: uid(),
+            itemName: "",
+            qty:"",
+            price: 0,
+            total: 0
+          })
+        },
+        deleteInvoiceItem(id){
+          this.invoiceItemList = this.invoiceItemList.filter(item => id !== item.id);
+        }
+
+    },
+    watch:   {
+      paymentTerms(){
+        const futureDate = new Date();
+        this.paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(this.paymentTerms));
+        this.paymentDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString('en-us', this.dateOptions);
+
+      }
     }
 };
 </script>
@@ -194,6 +218,7 @@ export default {
         max-width: 700px;
         width: 100%;
         background-color: #1a1a1a;
+        border-radius: 0 20px 20px 0;
         color: #fff;
         box-shadow: 10px 4px 6px -1px rgba(0, 0, 0, 0.2),
             0px 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -254,7 +279,7 @@ export default {
                         }
 
                         .qty {
-                            flex-basis: 10%
+                            flex-basis: 10%;
                         }
 
                         .price {
@@ -281,7 +306,6 @@ export default {
 
                         img {
                             position: absolute;
-
                             top: 15px;
                             right: 0;
                             width: 12px;
@@ -326,7 +350,7 @@ export default {
 
     .input {
         margin-bottom: 24px;
-
+    }
         label {
             margin-bottom: 6px;
             font-size: 12px;
@@ -346,6 +370,6 @@ export default {
             }
         }
 
-    }
-}
+      }
+
 </style>

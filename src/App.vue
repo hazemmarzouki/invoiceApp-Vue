@@ -2,55 +2,58 @@
   <div>
     <div v-if="!mobile" class="app flex">
       <Navigation />
-
       <div class="app-content flex flex-column">
-        <invoiceModal v-if="invoiceModal"/>
+        <transition name="invoice">
+          <invoiceModal v-if="invoiceModal" />
+        </transition>
         <router-view />
       </div>
     </div>
     <div v-else class="mobile-message flex-column flex">
       <h2>Sorry , This app is not supported on Mobile Devices , </h2>
       <p>To use This app , please use a Desktop or Tablet</p>
-      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {
+    mapState
+} from "vuex";
 import Navigation from "./components/Navigation.vue";
 import invoiceModal from "./components/Invoice_Modal.vue";
 
 export default {
-  data() {
-    return {
-      mobile: null,
-    };
-  },
-
-  components: {
-    Navigation,
-    invoiceModal,
-   
-  },
-  created() {
-    this.checkScreen();
-    window.addEventListener("resize", this.checkScreen);
-  },
-  methods: {
-    checkScreen() {
-      const windowWidth = window.innerWidth;
-      if (windowWidth <= 600) {
-        this.mobile = true;
-        return;
-      }
-        this.mobile = false;
-      
+    data() {
+        return {
+            mobile: null,
+        };
     },
-  },
-  computed : {
-    ...mapState(["invoiceModal"]),
 
-  }
+    components: {
+        Navigation,
+        invoiceModal,
+
+    },
+    created() {
+        this.checkScreen();
+        window.addEventListener("resize", this.checkScreen);
+    },
+    methods: {
+        checkScreen() {
+            const windowWidth = window.innerWidth;
+            if (windowWidth <= 600) {
+                this.mobile = true;
+                return;
+            }
+            this.mobile = false;
+
+        },
+    },
+    computed: {
+        ...mapState(["invoiceModal"]),
+
+    }
 };
 </script>
 
@@ -68,6 +71,7 @@ export default {
   background-color: #1a1a1a;
   min-height: 100vh;
   flex-direction: column;
+
   @media (min-width: 900px) {
     flex-direction: row;
   }
@@ -78,15 +82,29 @@ export default {
     position: relative;
   }
 }
+
 .mobile-message {
-text-align: center;
-justify-content: center;
-align-items: center;
-height: 100vh;
-background-color: #1a1a1a;
-color: #fff;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #fff;
 
 }
+
+/*animation of invoice modal*/
+
+.invoice-enter-active,
+.invoice-leave-active {
+  transition: 0.8s ease all;
+}
+
+.invoice-enter-from ,
+.invoice-leave-to {
+  transform: translateX(-700px);
+}
+
 
 button,
 .button {
@@ -155,6 +173,7 @@ button,
     border-radius: 50%;
     margin-right: 8px;
   }
+
   font-size: 12px;
   margin-right: 30px;
   align-items: center;
@@ -166,6 +185,7 @@ button,
   &::before {
     background-color: #33d69f;
   }
+
   color: #33d69f;
   background-color: rgba(51, 214, 160, 0.1);
 }
@@ -174,6 +194,7 @@ button,
   &::before {
     background-color: #ff8f00;
   }
+
   color: #ff8f00;
   background-color: rgba(255, 145, 0, 0.1);
 }
@@ -182,6 +203,7 @@ button,
   &::before {
     background-color: #dfe3fa;
   }
+
   color: #dfe3fa;
   background-color: rgba(223, 227, 250, 0.1);
 }
