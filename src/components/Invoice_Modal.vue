@@ -1,7 +1,7 @@
 <template>
   <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
     <form @submit.prevent="submitForm" class="invoice-content">
-      <Loading v-show="loading" />
+      <loading v-show="loading" />
       <h1 v-if="!editInvoice">New Invoice</h1>
       <h1 v-else>Edit Invoice</h1>
 
@@ -124,12 +124,16 @@
 
 <script>
 import { mapMutations } from "vuex";
+import loading from '../components/Loading.vue';
 import { uid } from "uid";
 import { db } from "../firebase/firebaseInit.js";
 import { collection, addDoc } from "firebase/firestore";
 
 export default {
   name: "invoiceModal",
+  components: {
+    loading,
+  },
   data() {
     return {
       dateOptions: {
@@ -201,38 +205,39 @@ export default {
         alert("Please add at least one item to your invoice");
         return;
       }
+      this.loading = true;
       this.calInvoiceTotal()
 
       try {
         const docRef = await addDoc(collection(db, "invoices"), {
           invoiceId: uid(6),
-        billerStreetAddress: this.billerStreetAddress,
-        billerCity: this.billerCity,
-        billerZipCode: this.billerZipCode,
-        billerCountry: this.billerCountry,
-        clientName: this.clientName,
-        clientEmail: this.clientEmail,
-        clientStreetAddress: this.clientStreetAddress,
-        clientCity: this.clientCity,
-        clientZipCode: this.clientZipCode,
-        clientCountry: this.clientCountry,
-        invoiceDate: this.invoiceDate,
-        invoiceDateUnix: this.invoiceDateUnix,
-        paymentTerms: this.paymentTerms,
-        paymentDueDate: this.paymentDueDate,
-        paymentDueDateUnix: this.paymentDueDateUnix,
-        productDescription: this.productDescription,
-        invoiceItemList: this.invoiceItemList,
-        invoiceTotal: this.invoiceTotal,
-        invoicePending: this.invoicePending,
-        invoiceDraft: this.invoiceDraft,
-        invoicePaid: null,
+          billerStreetAddress: this.billerStreetAddress,
+          billerCity: this.billerCity,
+          billerZipCode: this.billerZipCode,
+          billerCountry: this.billerCountry,
+          clientName: this.clientName,
+          clientEmail: this.clientEmail,
+          clientStreetAddress: this.clientStreetAddress,
+          clientCity: this.clientCity,
+          clientZipCode: this.clientZipCode,
+          clientCountry: this.clientCountry,
+          invoiceDate: this.invoiceDate,
+          invoiceDateUnix: this.invoiceDateUnix,
+          paymentTerms: this.paymentTerms,
+          paymentDueDate: this.paymentDueDate,
+          paymentDueDateUnix: this.paymentDueDateUnix,
+          productDescription: this.productDescription,
+          invoiceItemList: this.invoiceItemList,
+          invoiceTotal: this.invoiceTotal,
+          invoicePending: this.invoicePending,
+          invoiceDraft: this.invoiceDraft,
+          invoicePaid: null,
         });
-        console.log("collection added with ID: ", docRef.id);
+        console.log("Document written with ID: ", docRef.id);
       } catch (e) {
         console.error("Error adding document: ", e);
       }
-
+      this.loading = false;
 
 
       this.TOGGLE_INVOICE();
