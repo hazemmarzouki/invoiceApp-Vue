@@ -25,11 +25,16 @@
         </div>
       </div>
     </div>
+    <!--Invoice List-->
+    <div>
+      <Invoice v-for="(invoice,index) in invoiceData"   :invoice="invoice" :key="index"/>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapMutations} from "vuex";
+import Invoice from  "../components/Invoice.vue"
+import { mapMutations , mapState } from "vuex";
 export default {
   name: "Home",
   data() {
@@ -37,7 +42,9 @@ export default {
       filterMenu: null,
     };
   },
-  components: {},
+  components: {
+    Invoice,
+  },
   methods: {
     ...mapMutations(["TOGGLE_INVOICE"]),
     newInvoice() {
@@ -46,6 +53,9 @@ export default {
     toggleFilterMenu() {
       this.filterMenu = !this.filterMenu;
     },
+  },
+  computed: {
+    ...mapState(["invoiceData"]),
   },
 };
 </script>
@@ -70,14 +80,15 @@ export default {
       .filter {
         align-items: center;
       }
+
       span {
         font-size: 12px;
-}
+      }
     }
+
     .filter {
       margin-right: 40px;
       cursor: pointer;
-      
 
       img {
         margin-left: 12px;
@@ -91,8 +102,7 @@ export default {
         top: 25px;
         list-style: none;
         background-color: #363636;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
         li {
           cursor: pointer;

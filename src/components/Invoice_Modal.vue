@@ -10,7 +10,12 @@
         <h4>Bill From</h4>
         <div class="input flex flex-column">
           <label for="billerStreetAddress">Street Address</label>
-          <input required type="text" id="billerStreetAddress" v-model="billerStreetAddress" />
+          <input
+            required
+            type="text"
+            id="billerStreetAddress"
+            v-model="billerStreetAddress"
+          />
         </div>
         <div class="location-details flex">
           <div class="input flex flex-column">
@@ -41,7 +46,12 @@
         </div>
         <div class="input flex flex-column">
           <label for="clientStreetAddress">Street Address</label>
-          <input required type="text" id="clientStreetAddress" v-model="clientStreetAddress" />
+          <input
+            required
+            type="text"
+            id="clientStreetAddress"
+            v-model="clientStreetAddress"
+          />
         </div>
         <div class="location-details flex">
           <div class="input flex flex-column">
@@ -80,7 +90,12 @@
         </div>
         <div class="input flex flex-column">
           <label for="productDescription">Product Description</label>
-          <input required type="text" id="productDescription" v-model="productDescription" />
+          <input
+            required
+            type="text"
+            id="productDescription"
+            v-model="productDescription"
+          />
         </div>
         <div class="work-items">
           <h3>Item List</h3>
@@ -91,12 +106,20 @@
               <th class="price">Price</th>
               <th class="total">Total</th>
             </tr>
-            <tr class="table-items flex" v-for="(item, index) in invoiceItemList" :key="index">
+            <tr
+              class="table-items flex"
+              v-for="(item, index) in invoiceItemList"
+              :key="index"
+            >
               <td class="item-name"><input type="text" v-model="item.itemName" /></td>
               <td class="qty"><input type="text" v-model="item.qty" /></td>
               <td class="price"><input type="text" v-model="item.price" /></td>
               <td class="total flex">${{ (item.total = item.qty * item.price) }}</td>
-              <img @click="deleteInvoiceItem(item.id)" src="../assets/icon-delete.svg" alt="" />
+              <img
+                @click="deleteInvoiceItem(item.id)"
+                src="../assets/icon-delete.svg"
+                alt=""
+              />
             </tr>
           </table>
 
@@ -113,8 +136,17 @@
           <button type="button" @click="closeInvoice" class="red">Cancel</button>
         </div>
         <div class="right flex">
-          <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
-          <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+          <button
+            v-if="!editInvoice"
+            type="submit"
+            @click="saveDraft"
+            class="dark-purple"
+          >
+            Save Draft
+          </button>
+          <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="blue">
+            Create Invoice
+          </button>
           <button v-if="editInvoice" type="sumbit" class="purple">Update Invoice</button>
         </div>
       </div>
@@ -124,7 +156,7 @@
 
 <script>
 import { mapMutations } from "vuex";
-import loading from '../components/Loading.vue';
+import loading from "../components/Loading.vue";
 import { uid } from "uid";
 import { db } from "../firebase/firebaseInit.js";
 import { collection, addDoc } from "firebase/firestore";
@@ -166,13 +198,22 @@ export default {
     };
   },
   created() {
-
     //Get current date for invoice date field
     this.invoiceDateUnix = Date.now();
-    this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString('en-us', this.dateOptions);
+    this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
+      "en-us",
+      this.dateOptions
+    );
   },
   methods: {
-    ...mapMutations(["TOGGLE_INVOICE"]),
+    ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL"]),
+
+    checkClick(e) {
+      if (e.target === this.$refs.invoiceWrap) {
+        this.TOGGLE_MODAL();
+      }
+    },
+
     closeInvoice() {
       this.TOGGLE_INVOICE();
     },
@@ -182,15 +223,15 @@ export default {
         itemName: "",
         qty: "",
         price: 0,
-        total: 0
-      })
+        total: 0,
+      });
     },
     deleteInvoiceItem(id) {
-      this.invoiceItemList = this.invoiceItemList.filter(item => id !== item.id);
+      this.invoiceItemList = this.invoiceItemList.filter((item) => id !== item.id);
     },
     calInvoiceTotal() {
       this.invoiceTotal = 0;
-      this.invoiceItemList.forEach(item => {
+      this.invoiceItemList.forEach((item) => {
         this.invoiceTotal += item.total;
       });
     },
@@ -206,7 +247,7 @@ export default {
         return;
       }
       this.loading = true;
-      this.calInvoiceTotal()
+      this.calInvoiceTotal();
 
       try {
         const docRef = await addDoc(collection(db, "invoices"), {
@@ -239,24 +280,25 @@ export default {
       }
       this.loading = false;
 
-
       this.TOGGLE_INVOICE();
     },
 
     submitForm() {
       this.uploadInvoice();
-
-    }
-
+    },
   },
   watch: {
     paymentTerms() {
       const futureDate = new Date();
-      this.paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(this.paymentTerms));
-      this.paymentDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString('en-us', this.dateOptions);
-
-    }
-  }
+      this.paymentDueDateUnix = futureDate.setDate(
+        futureDate.getDate() + parseInt(this.paymentTerms)
+      );
+      this.paymentDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString(
+        "en-us",
+        this.dateOptions
+      );
+    },
+  },
 };
 </script>
 
@@ -272,7 +314,6 @@ export default {
 
   &::-webkit-scrollbar {
     display: none;
-
   }
 
   @media (min-width: 900px) {
@@ -281,17 +322,16 @@ export default {
 
   .invoice-content {
     position: relative;
-    padding: 40px;
-    max-width: 700px;
+    padding: 35px;
+    max-width: 550px;
     width: 100%;
     background-color: #1a1a1a;
     border-radius: 0 20px 20px 0;
     color: #fff;
-    box-shadow: 10px 4px 6px -1px rgba(0, 0, 0, 0.2),
-      0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 10px 4px 6px -1px rgba(0, 0, 0, 0.2), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
 
     h1 {
-      margin-bottom: 48px;
+      margin-bottom: 30px;
       color: #fff;
     }
 
@@ -304,13 +344,13 @@ export default {
     h4 {
       color: #57acdc;
       font-size: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
-    //Bill To /Bill From 
+    //Bill To /Bill From
     .bill-to,
     .bill-from {
-      margin-bottom: 48px;
+      margin-bottom: 30px;
 
       .location-details {
         gap: 16px;
@@ -377,7 +417,6 @@ export default {
               right: 0;
               width: 12px;
               height: 16px;
-
             }
           }
         }
@@ -392,12 +431,9 @@ export default {
           img {
             width: 12px;
             margin-right: 4px;
-
           }
         }
-
       }
-
     }
 
     .save {
@@ -410,9 +446,7 @@ export default {
       .right {
         justify-content: flex-end;
       }
-
     }
-
   }
 
   .input {
@@ -437,6 +471,5 @@ export default {
       outline: none;
     }
   }
-
 }
 </style>

@@ -3,6 +3,7 @@
     <div v-if="!mobile" class="app flex">
       <Navigation />
       <div class="app-content flex flex-column">
+        <Modal v-if="modalActive" />
         <transition name="invoice">
           <invoiceModal v-if="invoiceModal" />
         </transition>
@@ -10,50 +11,50 @@
       </div>
     </div>
     <div v-else class="mobile-message flex-column flex">
-      <h2>Sorry , This app is not supported on Mobile Devices , </h2>
+      <h2>Sorry , This app is not supported on Mobile Devices ,</h2>
       <p>To use This app , please use a Desktop or Tablet</p>
     </div>
   </div>
 </template>
 
 <script>
-import {
-    mapState
-} from "vuex";
+import { mapState , mapActions } from "vuex";
 import Navigation from "./components/Navigation.vue";
 import invoiceModal from "./components/Invoice_Modal.vue";
+import Modal from "./components/Modal.vue";
 
 export default {
-    data() {
-        return {
-            mobile: null,
-        };
-    },
+  data() {
+    return {
+      mobile: null,
+    };
+  },
 
-    components: {
-        Navigation,
-        invoiceModal,
+  components: {
+    Navigation,
+    invoiceModal,
+    Modal,
+  },
+  created() {
+    this.GET_INVOICES();
+    this.checkScreen();
+    window.addEventListener("resize", this.checkScreen);
+  },
+  methods: {
+    ...mapActions(["GET_INVOICES"]),
 
+    checkScreen() {
+      const windowWidth = window.innerWidth;
+      if (windowWidth <= 600) {
+        this.mobile = true;
+        return;
+      }
+      this.mobile = false;
     },
-    created() {
-        this.checkScreen();
-        window.addEventListener("resize", this.checkScreen);
-    },
-    methods: {
-        checkScreen() {
-            const windowWidth = window.innerWidth;
-            if (windowWidth <= 600) {
-                this.mobile = true;
-                return;
-            }
-            this.mobile = false;
-
-        },
-    },
-    computed: {
-        ...mapState(["invoiceModal"]),
-
-    }
+  },
+  computed: {
+    ...mapState(["invoiceModal", "modalActive","invoicesLoaded"]),
+  },
 };
 </script>
 
@@ -90,7 +91,6 @@ export default {
   height: 100vh;
   background-color: #1a1a1a;
   color: #fff;
-
 }
 
 /*animation of invoice modal*/
@@ -100,11 +100,10 @@ export default {
   transition: 0.8s ease all;
 }
 
-.invoice-enter-from ,
+.invoice-enter-from,
 .invoice-leave-to {
   transform: translateX(-700px);
 }
-
 
 button,
 .button {
@@ -125,8 +124,8 @@ button,
   background-color: #ec5757;
 }
 
-.purple {
-  background-color: #7c5dfa;
+.blue {
+  background-color: #57acdc;
 }
 
 .green {
