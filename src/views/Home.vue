@@ -26,8 +26,15 @@
       </div>
     </div>
     <!--Invoice List-->
-    <div>
+    <div v-if="invoiceData.length > 3">
       <Invoice v-for="(invoice,index) in invoiceData"   :invoice="invoice" :key="index"/>
+    </div>
+
+    <div v-else class="empty flex flex-column">
+      <img src="../assets/illustration-empty.svg" alt="">
+      <h3>There is nothing here</h3>
+      <p>Create an invoice by clicking the New Invoice button and get started</p>
+
     </div>
   </div>
 </template>
@@ -135,6 +142,27 @@ export default {
           height: 10px;
         }
       }
+    }
+  }
+
+  .empty {
+    margin-top:90px;
+    align-items:center;
+
+    img {
+      width:240px;
+    }
+
+    h3{
+      font-size : 20px;
+      margin-top: 50px;
+    }
+    p{
+      text-align : center;
+      max-width:224px;
+      font-size:12px;
+      font-weight:300;
+      margin-top:16px;
     }
   }
 }
